@@ -14,12 +14,7 @@ import (
 func TestCreateNewProduct(t *testing.T) {
 	as := assert.New(t)
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		as.Error(err)
-	}
-
-	db.AutoMigrate(&entity.Product{})
+	db := setDB()
 
 	product, err := entity.NewProduct("Nike Shox", 10)
 	as.Nil(err)
@@ -33,12 +28,7 @@ func TestCreateNewProduct(t *testing.T) {
 func TestFindAllProducts(t *testing.T) {
 	as := assert.New(t)
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		as.Error(err)
-	}
-
-	db.AutoMigrate(&entity.Product{})
+	db := setDB()
 
 	for i := 1; i < 24; i++ {
 		product, err := entity.NewProduct(fmt.Sprintf("Product %d", i), rand.Float64()*100)
@@ -70,12 +60,7 @@ func TestFindAllProducts(t *testing.T) {
 func TestFindByID(t *testing.T) {
 	as := assert.New(t)
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		as.Error(err)
-	}
-
-	db.AutoMigrate(&entity.Product{})
+	db := setDB()
 
 	product, err := entity.NewProduct("Product 1", 20.00)
 	as.NoError(err)
@@ -90,12 +75,7 @@ func TestFindByID(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 	as := assert.New(t)
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		as.Error(err)
-	}
-
-	db.AutoMigrate(&entity.Product{})
+	db := setDB()
 
 	product, err := entity.NewProduct("Product 1", 20.50)
 	as.NoError(err)
@@ -114,13 +94,7 @@ func TestUpdateProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	as := assert.New(t)
-
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	if err != nil {
-		as.Error(err)
-	}
-
-	db.AutoMigrate(&entity.Product{})
+	db := setDB()
 
 	product, err := entity.NewProduct("Product 1", 20.50)
 	as.NoError(err)
@@ -134,4 +108,15 @@ func TestDeleteProduct(t *testing.T) {
 	_, err = productDB.FindByID(product.ID.String())
 	as.Error(err)
 
+}
+
+func setDB() *gorm.DB {
+	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	db.AutoMigrate(&entity.Product{})
+
+	return db
 }
