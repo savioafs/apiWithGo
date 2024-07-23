@@ -11,10 +11,10 @@ func TestNewProduct(t *testing.T) {
 	tests := []struct {
 		testName string
 		name     string
-		price    int
+		price    float64
 
 		expectName  string
-		expectPrice int
+		expectPrice float64
 	}{
 		{
 			testName: "create product Nike Air Force One without error",
